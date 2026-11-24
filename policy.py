@@ -10,7 +10,7 @@ from minhash import LSH, MinHash, similarity
 FLOOR = 0.3
 MARGIN = 0.1
 META = {"tid", "hid", "seq", "opened", "received", "reported", "filed"}
-CORPUS = {"hosts", "configs", "code", "threads", "revisions", "logs"}
+KINDS = {"scenario": "corpus", "resolution_id": "tickets", "root_cause": "bugs", "category": "docs", "verdict": "citations"}
 ANSWERS = {"tickets": ("resolution_id",), "bugs": ("component", "root_cause"), "docs": ("category",),
            "citations": ("verdict",)}
 IDENT = re.compile(r"\b(CHG|INC|POL)-\d{3,4}\b|\bREL-\d+\.\d+\b", re.IGNORECASE)
@@ -48,9 +48,10 @@ def status_class(text):
 
 class TaskReuse:
     def __init__(self, data_dir, floor=FLOOR, margin=MARGIN, validate=True, calibrate=True):
-        self.name = dataset_name(data_dir)
         env = os.path.join(data_dir, "env")
-        self.answer_fields = ("answer",) if self.name in CORPUS else ANSWERS[self.name]
+        history = load_jsonl(os.path.join(env, "history.jsonl"))
+        self.name = next(kind for field, kind in KINDS.items() if field in history[0])
+        self.answer_fields = ("answer",) if self.name == "corpus" else ANSWERS[self.name]
         self.venues = {}
         if self.name == "citations":
             with open(os.path.join(env, "db.json"), encoding="utf-8") as handle:
@@ -62,7 +63,7 @@ class TaskReuse:
         self.lsh = LSH(bands=64, rows=2)
         self.sig, self.key, self.answer, self.by_key = {}, {}, {}, {}
         self.seconds = 0.0
-        for record in load_jsonl(os.path.join(env, "history.jsonl")):
+        for record in history:
             self.add(record["hid"], record, self.history_answer(record))
 
     def history_answer(self, record):

@@ -13,6 +13,7 @@ Haotian Xia. The assignment asks for three files:
 ## Setup
 
 ```bash
+git clone https://github.com/haotianxia/a2-minhash && cd a2-minhash
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 export GEMINI_API_KEY=YOUR_KEY
@@ -33,11 +34,13 @@ python kickoff.py plots --limit 30         # out/tables.md and out/plots/*.png
 
 The report uses the first 30 tasks (in `seq` order) of each dataset to keep the API cost low; without `--limit` every command uses all tasks.
 
-`out/` holds the reported run: `out/results/` (one row per task and configuration), `out/tables.md`, the CSV files, `out/plots/` and `out/runs.tar.gz` with the working directory and harness session log of every task. Extract the archive with `tar xzf out/runs.tar.gz -C out` before running `trajectories`. `run` resumes from the rows in `out/results/`, so a fresh run needs a new folder: add `--out out2` to every command.
+`out/` holds the reported run: `out/results/` (one row per task and configuration), `out/tables.md`, the CSV files, `out/plots/` and `out/runs.tar.gz` with the working directory of every task and the harness session log of every agent run. Extract the archive with `tar xzf out/runs.tar.gz -C out` before running `trajectories`. `run` resumes from the rows in `out/results/`, so a fresh run needs a new folder: add `--out out2` to every command.
+
+Held-out or regenerated tasks of any of the ten datasets: put the dataset folder (with `env/`, `hidden/` and a copy of that dataset's `verify.py`) directly under `assignment2/datasets/` with any folder name, then run `python kickoff.py run --datasets assignment2/datasets/<folder> --out <new folder>`, with a new `--out` for each held-out folder (kickoff names its results after the part of the folder name before the first hyphen). `TaskReuse` recognises the dataset from the fields of its history records, so the folder name does not matter to the policy.
 
 | option | meaning |
 |---|---|
-| `--datasets tickets,hosts` | dataset names under `assignment2/datasets/`, or paths to regenerated datasets such as `/tmp/tickets-d25` (default: tickets, bugs, docs, citations, hosts, configs, code, logs) |
+| `--datasets tickets,hosts` | dataset folder names under `assignment2/datasets/`, or paths to such folders (default: tickets, bugs, docs, citations, hosts, configs, code, logs) |
 | `--configs baseline,both` | any of `baseline`, `task`, `content`, `both` (default: all four) |
 | `--workers 16` | (configuration, dataset) streams run in parallel; tasks inside a stream run in `seq` order |
 | `--limit 30` | only the first N tasks (by `seq`) of each dataset |
