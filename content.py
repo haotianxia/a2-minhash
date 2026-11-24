@@ -76,7 +76,10 @@ class ContentReuse:
                 header, body = line, []
             else:
                 body.append(line)
-        return parts + [(header, body)]
+        parts.append((header, body))
+        if all(len("\n".join(b)) < self.min_chars for _, b in parts):
+            return [(None, lines)]
+        return parts
 
     def _fold_part(self, name, body):
         text = "\n".join(body)

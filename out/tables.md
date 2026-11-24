@@ -4,8 +4,8 @@ Table A. All 8 datasets together.
 |---|---|---|---|---|---|---|---|
 | baseline | 222/240 (92.5%) | 0 (0) | 2598 (+0%) | 2838 (+0%) | 34.2M (+0%) | 51 min (+0%) | 0.00 s |
 | task-level reuse | 232/240 (96.7%) | 82 (0) | 1839 (-29%) | 1997 (-30%) | 24.4M (-29%) | 39 min (-24%) | 1.49 s |
-| content-level reuse | 223/240 (92.9%) | 0 (0) | 2611 (+1%) | 2849 (+0%) | 32.8M (-4%) | 51 min (-1%) | 7.10 s |
-| both | 227/240 (94.6%) | 81 (0) | 1919 (-26%) | 2076 (-27%) | 24.7M (-28%) | 40 min (-21%) | 4.00 s |
+| content-level reuse | 222/240 (92.5%) | 0 (0) | 2643 (+2%) | 2881 (+2%) | 32.9M (-4%) | 50 min (-3%) | 7.06 s |
+| both | 228/240 (95.0%) | 81 (0) | 1942 (-25%) | 2099 (-26%) | 24.7M (-28%) | 39 min (-24%) | 4.19 s |
 
 Table B. Per dataset, per task averages (accuracy over all tasks).
 
@@ -29,20 +29,20 @@ Table B. Per dataset, per task averages (accuracy over all tasks).
 | citations | both | 23/30 | 10 | 10.7 | 11.3 | 177.9 | 16.8 | 22.0 |
 | hosts | baseline | 30/30 | 0 | 9.6 | 10.6 | 54.8 | 7.7 | 0.0 |
 | hosts | task-level reuse | 30/30 | 12 | 5.6 | 6.2 | 25.2 | 4.9 | 3.7 |
-| hosts | content-level reuse | 30/30 | 0 | 9.3 | 10.3 | 44.4 | 7.5 | 7.0 |
-| hosts | both | 30/30 | 12 | 5.3 | 5.9 | 34.9 | 4.9 | 7.1 |
+| hosts | content-level reuse | 30/30 | 0 | 9.2 | 10.2 | 54.3 | 6.7 | 8.3 |
+| hosts | both | 30/30 | 12 | 5.3 | 5.9 | 28.0 | 3.9 | 6.8 |
 | configs | baseline | 30/30 | 0 | 10.0 | 11.0 | 79.4 | 8.5 | 0.0 |
 | configs | task-level reuse | 29/30 | 13 | 6.4 | 7.0 | 41.0 | 6.3 | 2.1 |
-| configs | content-level reuse | 30/30 | 0 | 10.8 | 11.8 | 76.3 | 9.1 | 17.3 |
-| configs | both | 29/30 | 13 | 6.5 | 7.1 | 40.2 | 6.0 | 5.7 |
+| configs | content-level reuse | 28/30 | 0 | 11.4 | 12.4 | 73.1 | 8.4 | 16.8 |
+| configs | both | 30/30 | 13 | 6.4 | 7.0 | 40.3 | 4.8 | 7.8 |
 | code | baseline | 30/30 | 0 | 10.4 | 11.4 | 60.6 | 8.2 | 0.0 |
 | code | task-level reuse | 30/30 | 7 | 7.7 | 8.4 | 40.0 | 6.3 | 1.1 |
-| code | content-level reuse | 29/30 | 0 | 9.8 | 10.8 | 52.7 | 7.6 | 11.1 |
-| code | both | 30/30 | 7 | 8.0 | 8.7 | 46.3 | 6.4 | 8.7 |
+| code | content-level reuse | 30/30 | 0 | 9.1 | 10.1 | 53.5 | 6.5 | 10.8 |
+| code | both | 30/30 | 7 | 8.1 | 8.9 | 47.5 | 5.8 | 10.4 |
 | logs | baseline | 30/30 | 0 | 10.5 | 11.5 | 70.6 | 9.1 | 0.0 |
 | logs | task-level reuse | 30/30 | 11 | 6.5 | 7.1 | 38.2 | 5.5 | 1.4 |
-| logs | content-level reuse | 30/30 | 0 | 9.4 | 10.4 | 59.2 | 7.5 | 9.0 |
-| logs | both | 30/30 | 11 | 6.5 | 7.2 | 41.8 | 5.6 | 5.6 |
+| logs | content-level reuse | 30/30 | 0 | 10.7 | 11.7 | 56.2 | 7.4 | 7.0 |
+| logs | both | 30/30 | 11 | 7.2 | 7.8 | 48.9 | 5.2 | 8.3 |
 
 Table C. Content layer inside the agent (content-level reuse only).
 
@@ -52,10 +52,10 @@ Table C. Content layer inside the agent (content-level reuse only).
 | bugs | 347 | 11 | 3222258 | 3206710 | 99.5% |
 | docs | 281 | 35 | 3177870 | 2736579 | 86.1% |
 | citations | 376 | 13 | 3418433 | 3408672 | 99.7% |
-| hosts | 248 | 2 | 524916 | 523051 | 99.6% |
-| configs | 293 | 39 | 897395 | 858171 | 95.6% |
-| code | 262 | 30 | 729186 | 634798 | 87.1% |
-| logs | 248 | 3 | 639529 | 635546 | 99.4% |
+| hosts | 246 | 2 | 679255 | 677408 | 99.7% |
+| configs | 309 | 51 | 776994 | 729561 | 93.9% |
+| code | 236 | 14 | 714704 | 680995 | 95.3% |
+| logs | 288 | 19 | 535318 | 494656 | 92.4% |
 
 Table D. Paired view: the same task ids in a configuration and in the baseline.
 
@@ -74,14 +74,14 @@ Table D. Paired view: the same task ids in a configuration and in the baseline.
 | citations | content-level reuse | 0 | 0/0 | 0 | 30 | 20 / 22 | 8976 / 9181 | 278.3 / 281.5 |
 | citations | both | 10 | 8/10 | 3206 | 20 | 13 / 14 | 5338 / 5975 | 256.0 / 282.3 |
 | hosts | task-level reuse | 12 | 12/12 | 698 | 18 | 18 / 18 | 757 / 945 | 38.0 / 44.5 |
-| hosts | content-level reuse | 0 | 0/0 | 0 | 30 | 30 / 30 | 1331 / 1643 | 38.1 / 50.7 |
-| hosts | both | 12 | 12/12 | 698 | 18 | 18 / 18 | 1047 / 945 | 47.4 / 44.5 |
+| hosts | content-level reuse | 0 | 0/0 | 0 | 30 | 30 / 30 | 1630 / 1643 | 55.0 / 50.7 |
+| hosts | both | 12 | 12/12 | 698 | 18 | 18 / 18 | 841 / 945 | 34.8 / 44.5 |
 | configs | task-level reuse | 13 | 13/13 | 675 | 17 | 16 / 17 | 1230 / 1705 | 32.5 / 58.7 |
-| configs | content-level reuse | 0 | 0/0 | 0 | 30 | 30 / 30 | 2289 / 2381 | 58.6 / 52.6 |
-| configs | both | 13 | 13/13 | 675 | 17 | 16 / 17 | 1205 / 1705 | 58.7 / 58.7 |
+| configs | content-level reuse | 0 | 0/0 | 0 | 30 | 28 / 30 | 2193 / 2381 | 58.3 / 52.6 |
+| configs | both | 13 | 13/13 | 675 | 17 | 17 / 17 | 1208 / 1705 | 49.4 / 58.7 |
 | code | task-level reuse | 7 | 7/7 | 407 | 23 | 23 / 23 | 1199 / 1413 | 46.2 / 50.1 |
-| code | content-level reuse | 0 | 0/0 | 0 | 30 | 29 / 30 | 1580 / 1819 | 38.4 / 51.1 |
-| code | both | 7 | 7/7 | 407 | 23 | 23 / 23 | 1389 / 1413 | 41.7 / 50.1 |
+| code | content-level reuse | 0 | 0/0 | 0 | 30 | 30 / 30 | 1604 / 1819 | 45.4 / 51.1 |
+| code | both | 7 | 7/7 | 407 | 23 | 23 / 23 | 1425 / 1413 | 43.5 / 50.1 |
 | logs | task-level reuse | 11 | 11/11 | 733 | 19 | 19 / 19 | 1146 / 1384 | 46.7 / 48.5 |
-| logs | content-level reuse | 0 | 0/0 | 0 | 30 | 30 / 30 | 1775 / 2117 | 52.7 / 51.3 |
-| logs | both | 11 | 11/11 | 733 | 19 | 19 / 19 | 1253 / 1384 | 50.6 / 48.5 |
+| logs | content-level reuse | 0 | 0/0 | 0 | 30 | 30 / 30 | 1687 / 2117 | 47.6 / 51.3 |
+| logs | both | 11 | 11/11 | 733 | 19 | 19 / 19 | 1467 / 1384 | 69.6 / 48.5 |
