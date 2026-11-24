@@ -4,3 +4,7 @@ __pycache__/
 # ablation variants of the datasets are generated, not kept
 assignment2/datasets/*-d[0-9][0-9]/
 assignment2/datasets/*-h[0-9]*/
+
+# experiment outputs: per-task working directories and transcripts are large
+out/runs/
+out/sweep_answer_*.json

@@ -1,3 +1,68 @@
+# MinHash reuse for the Spartacus agent
+
+Haotian Xia. The assignment asks for three files:
+
+| file | what it does |
+|---|---|
+| `minhash.py` | word 3-shingles, MinHash with 128 hash functions (seed 1115), banded LSH |
+| `policy.py` | task-level reuse: `TaskReuse(dataset_dir)` with `lookup(task)` and `add(tid, task, answer)` |
+| `content.py` | content-level reuse: `ContentReuse().tools(workdir)` returns the harness read tools with near-duplicate outputs folded into exact diffs |
+
+`kickoff.py` runs the four configurations and the offline studies, `plotty.py` draws the figures, and `writeup.pdf` is the report. The harness, datasets and verifiers are unchanged.
+
+## Setup
+
+```bash
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+export GEMINI_API_KEY=YOUR_KEY
+```
+
+`requirements.txt` installs Spartacus from GitHub at commit `711db62`.
+
+## Reproduce the report
+
+```bash
+python kickoff.py run --limit 30           # first 30 tasks of 8 datasets x 4 configs, gemini-3.5-flash-lite, one row per task in out/results/
+python kickoff.py summary --limit 30       # out/summary.csv
+python kickoff.py sweep --limit 30         # threshold sweep from the baseline answers, out/sweep.csv (no model calls)
+python kickoff.py replay                   # content layer over every scenario of hosts, configs, code and logs, out/replay.csv (no model calls)
+python kickoff.py trajectories --limit 30  # baseline transcripts replayed through the content layer, out/trajectories.csv (no model calls)
+python kickoff.py plots --limit 30         # out/tables.md and out/plots/*.png
+```
+
+The report uses the first 30 tasks (in `seq` order) of each dataset to keep the API cost low; without `--limit` every command uses all tasks.
+
+`out/` holds the reported run: `out/results/` (one row per task and configuration), `out/tables.md`, the CSV files, `out/plots/` and `out/runs.tar.gz` with the working directory and harness session log of every task. Extract the archive with `tar xzf out/runs.tar.gz -C out` before running `trajectories`. `run` resumes from the rows in `out/results/`, so a fresh run needs a new folder: add `--out out2` to every command.
+
+| option | meaning |
+|---|---|
+| `--datasets tickets,hosts` | dataset names under `assignment2/datasets/`, or paths to regenerated datasets such as `/tmp/tickets-d25` (default: tickets, bugs, docs, citations, hosts, configs, code, logs) |
+| `--configs baseline,both` | any of `baseline`, `task`, `content`, `both` (default: all four) |
+| `--workers 16` | (configuration, dataset) streams run in parallel; tasks inside a stream run in `seq` order |
+| `--limit 30` | only the first N tasks (by `seq`) of each dataset |
+| `--out DIR` | output folder (default `out/`) |
+
+A stream stops at the first task whose model calls still fail after three attempts (for example when API credit runs out) and does not record that task; running the same command again resumes every stream from its rows in `out/results/`. Every task runs in its own working directory under `out/runs/`, which keeps `answer.json` and the harness session log.
+
+## Using the two layers with the harness
+
+```python
+from spartacus import Harness
+from content import ContentReuse
+from policy import TaskReuse
+
+reuse = TaskReuse("assignment2/datasets/tickets")
+hit = reuse.lookup(task)                      # None, or {"match", "sim", "tau", "answer"}
+if hit is None:
+    layer = ContentReuse()
+    Harness(workdir, model="gemini-3.5-flash-lite", extra_tools=layer.tools(workdir)).run(prompt)
+# after verify.py passes for the written answer:
+reuse.add(task["tid"], task, answer)
+```
+
+---
+
 # COMP 480/580 — Assignment 2: MinHash for Efficient Agent Trajectories
 
 In this assignment, you will explore whether **MinHash** can improve the efficiency of an AI agent by identifying and reusing previously processed information without compromising task correctness.

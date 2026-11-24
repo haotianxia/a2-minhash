@@ -1,0 +1,3 @@
+numpy>=2.0
+matplotlib>=3.8
+spartacus @ git+https://github.com/sahiljoshi515/Spartacus.git@711db625b3513a34c6521010ea64a35635825b5a
