@@ -55,7 +55,7 @@ class ContentReuse:
 
     def _fold(self, label, text):
         lines = text.splitlines()
-        if all(NUMBERED.match(line) for line in lines):
+        if label.startswith("read_file(") and all(NUMBERED.match(line) for line in lines):
             parts = [(None, [line.split("\t", 1)[1] for line in lines])]
         else:
             parts = self._split(lines)
