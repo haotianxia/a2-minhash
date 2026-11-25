@@ -24,29 +24,27 @@ export GEMINI_API_KEY=YOUR_KEY
 ## Reproduce the report
 
 ```bash
-python kickoff.py run --limit 30           # first 30 tasks of 8 datasets x 4 configs, gemini-3.5-flash-lite, one row per task in out/results/
-python kickoff.py summary --limit 30       # out/summary.csv
-python kickoff.py sweep --limit 30         # threshold sweep from the baseline answers, out/sweep.csv (no model calls)
-python kickoff.py replay                   # content layer over every scenario of hosts, configs, code and logs, out/replay.csv (no model calls)
-python kickoff.py trajectories --limit 30  # baseline transcripts replayed through the content layer, out/trajectories.csv (no model calls)
-python kickoff.py plots --limit 30         # out/tables.md and out/plots/*.png
+python kickoff.py run --workers 16 --out out2   # all 420 tasks of 8 datasets x 4 configs, gemini-3.5-flash-lite, one row per task in out2/results/
+python kickoff.py summary --out out2            # out2/summary.csv
+python kickoff.py sweep --out out2              # threshold sweep from the baseline answers, out2/sweep.csv (no model calls)
+python kickoff.py replay --out out2             # content layer over every scenario of hosts, configs, code and logs, out2/replay.csv (no model calls)
+python kickoff.py trajectories --out out2       # baseline transcripts replayed through the content layer, out2/trajectories.csv (no model calls)
+python kickoff.py plots --out out2              # out2/tables.md, out2/minhash_error.csv and out2/plots/*.png
 ```
 
-The report uses the first 30 tasks (in `seq` order) of each dataset to keep the API cost low; without `--limit` every command uses all tasks.
+`out/` holds the reported run: `out/results/` (one row per task and configuration), `out/tables.md`, the CSV files, `out/plots/` and `out/runs.tar.gz` with the working directory of every task and the harness session log of each of the 1,400 agent runs. `run` resumes from the rows in its output folder, so `run` without `--out` makes no model calls in a fresh clone. To recompute the reported tables and figures from the shipped transcripts, run `tar xzf out/runs.tar.gz -C out` and then the last five commands without `--out`.
 
-`out/` holds the reported run: `out/results/` (one row per task and configuration), `out/tables.md`, the CSV files, `out/plots/` and `out/runs.tar.gz` with the working directory of every task and the harness session log of every agent run. Extract the archive with `tar xzf out/runs.tar.gz -C out` before running `trajectories`. `run` resumes from the rows in `out/results/`, so a fresh run needs a new folder: add `--out out2` to every command.
-
-Held-out or regenerated tasks of any of the ten datasets: put the dataset folder (with `env/`, `hidden/` and a copy of that dataset's `verify.py`) directly under `assignment2/datasets/` with any folder name, then run `python kickoff.py run --datasets assignment2/datasets/<folder> --out <new folder>`, with a new `--out` for each held-out folder (kickoff names its results after the part of the folder name before the first hyphen). `TaskReuse` recognises the dataset from the fields of its history records, so the folder name does not matter to the policy.
+Held-out or regenerated tasks of any of the ten datasets: put the dataset folder (with `env/`, `hidden/` and a copy of that dataset's `verify.py`) directly under `assignment2/datasets/` with any folder name, then run `python kickoff.py run --datasets assignment2/datasets/<folder> --out <new folder>`, with a new `--out` for each held-out folder (kickoff names its results after the part of the folder name before the first hyphen). `python kickoff.py summary --out <new folder>` then prints accuracy and cost per configuration; pass the same `--datasets` to `sweep` and `trajectories`, and note that `plots` draws only datasets whose folder name, up to the first hyphen, is tickets, bugs, docs, citations, hosts, configs, code or logs (for example `tickets-h1`), and stops with an error when the output folder holds none of them. `TaskReuse` recognises the dataset from the fields of its history records, so the folder name does not matter to the policy.
 
 | option | meaning |
 |---|---|
-| `--datasets tickets,hosts` | dataset folder names under `assignment2/datasets/`, or paths to such folders (default: tickets, bugs, docs, citations, hosts, configs, code, logs) |
+| `--datasets tickets,hosts` | dataset folder names under `assignment2/datasets/`, or paths to such folders (default: tickets, bugs, docs, citations, hosts, configs, code, logs; for `replay`, which needs `env/scenarios/`: hosts, configs, code, logs) |
 | `--configs baseline,both` | any of `baseline`, `task`, `content`, `both` (default: all four) |
-| `--workers 16` | (configuration, dataset) streams run in parallel; tasks inside a stream run in `seq` order |
-| `--limit 30` | only the first N tasks (by `seq`) of each dataset |
+| `--workers 16` | number of (configuration, dataset) streams run in parallel (default: 8); tasks inside a stream run in `seq` order |
+| `--limit 30` | only the first 30 tasks (by `seq`) of each dataset, for a cheaper run (default: all tasks) |
 | `--out DIR` | output folder (default `out/`) |
 
-A stream stops at the first task whose model calls still fail after three attempts (for example when API credit runs out) and does not record that task; running the same command again resumes every stream from its rows in `out/results/`. Every task runs in its own working directory under `out/runs/`, which keeps `answer.json` and the harness session log.
+A stream stops at the first task whose model calls still fail after three attempts (for example when API credit runs out) and does not record that task; running the same command again resumes every stream from its rows in the output folder's `results/`. Every task runs in its own working directory under the output folder's `runs/`, which keeps `answer.json` and the harness session log.
 
 ## Using the two layers with the harness
 

@@ -142,7 +142,7 @@ def fig_threshold(out):
             ax.plot(taus, bad, color=COLORS[key], marker="x", lw=1.0, label=label + ": wrong reuses")
         cal = [r for r in rows if r["dataset"] == name and r["mode"] == "calibrated"][0]
         ax.axvline(float(cal["tau"]), color=MUTED, lw=1)
-        ax.text(float(cal["tau"]), ax.get_ylim()[1] * 0.97, " calibrated %.2f" % float(cal["tau"]),
+        ax.text(float(cal["tau"]), ax.get_ylim()[1] * 0.97, " calibrated %g" % round(float(cal["tau"]), 3),
                 color=INK2, fontsize=7.5, va="top")
         ax.set_title(name)
     for ax in axes[1]:
@@ -225,9 +225,10 @@ def fig_overhead(out, table):
 def paired(rows, names):
     by = {(r["config"], r["dataset"], r["tid"]): r for r in rows}
     lines = ["", "Table D. Paired view: the same task ids in a configuration and in the baseline.", "",
-             "| dataset | configuration | reused | baseline accuracy on reused | baseline tokens of reused (K) | "
-             "agent tasks | accuracy config / baseline | tokens config / baseline (K) | median tokens config / baseline (K) |",
-             "|---|---|---|---|---|---|---|---|---|"]
+             "| dataset | configuration | reused (history / earlier task) | baseline accuracy on reused | "
+             "baseline tokens of reused (K) | share of baseline tokens | agent tasks | accuracy config / baseline | "
+             "tokens config / baseline (K) | median tokens config / baseline (K) |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
     for name in names:
         for config in ("task", "content", "both"):
             tids = [r["tid"] for r in rows if r["config"] == config and r["dataset"] == name
@@ -241,10 +242,12 @@ def paired(rows, names):
             def median(cfg, ts):
                 return float(np.median([by[(cfg, name, t)]["input_tokens"] for t in ts])) if ts else 0.0
 
-            lines.append("| %s | %s | %d | %d/%d | %.0f | %d | %d / %d | %.0f / %.0f | %.1f / %.1f |" % (
-                name, NAMES[config], len(reused), total("baseline", reused, "passed"), len(reused),
-                total("baseline", reused, "input_tokens") / 1000, len(agent), total(config, agent, "passed"),
-                total("baseline", agent, "passed"), total(config, agent, "input_tokens") / 1000,
+            history = sum(by[(config, name, t)]["match"].startswith("H-") for t in reused)
+            lines.append("| %s | %s | %d (%d / %d) | %d/%d | %.0f | %.0f%% | %d | %d / %d | %.0f / %.0f | %.1f / %.1f |" % (
+                name, NAMES[config], len(reused), history, len(reused) - history, total("baseline", reused, "passed"),
+                len(reused), total("baseline", reused, "input_tokens") / 1000,
+                100 * total("baseline", reused, "input_tokens") / total("baseline", tids, "input_tokens"), len(agent),
+                total(config, agent, "passed"), total("baseline", agent, "passed"), total(config, agent, "input_tokens") / 1000,
                 total("baseline", agent, "input_tokens") / 1000, median(config, agent) / 1000,
                 median("baseline", agent) / 1000))
     return lines
